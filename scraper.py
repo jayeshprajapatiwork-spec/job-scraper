@@ -11,20 +11,85 @@ COMPANIES = [
     "duolingo",
     "airbnb",
     "robinhood",
-    "coinbase"
+    "coinbase",
+    "razorpay",
+    "phonepe",
+    "groww",
+    "zerodha",
+    "cred",
+    "meesho",
+    "swiggy",
+    "zomato",
+    "zepto",
+    "flipkart",
+    "paytm",
+    "ola",
+    "olaelectric",
+    "rapido",
+    "delhivery",
+    "browserstack",
+    "postman",
+    "freshworks",
+    "chargebee",
+    "darwinbox",
+    "juspay",
+    "coinDCX",
+    "coinswitch",
+    "unacademy",
+    "urbancompany",
+    "inmobi",
+    "jumbotail",
+    "netradyne",
+    "ofbusiness",
+    "lenskart"
 ]
 
 ROLE_KEYWORDS = [
-    "intern",
-    "internship",
-    "software",
     "software engineer",
+    "software engineering",
+    "software developer",
     "backend",
+    "frontend",
     "full stack",
+    "full-stack",
+    "java",
+    "python",
     "developer",
+    "web developer",
+    "swe",
     "sde",
-    "engineering",
-    "new grad"
+    "engineering intern",
+    "software engineer intern",
+    "backend engineer",
+    "full stack engineer",
+    "platform engineer",
+    "cloud engineer",
+    "machine learning",
+    "ai engineer",
+    "data engineer"
+]
+
+EXCLUDED = [
+    "marketing",
+    "sales",
+    "finance",
+    "audit",
+    "accounting",
+    "tax",
+    "legal",
+    "recruiting",
+    "hr",
+    "human resources",
+    "customer support",
+    "operations",
+    "business analyst",
+    "product manager",
+    "designer",
+    "content",
+    "campaign",
+    "merchant",
+    "regulatory",
+    "compliance"
 ]
 
 LOCATION_KEYWORDS = [
@@ -67,12 +132,19 @@ for company in COMPANIES:
             )
 
             location_match = any(
-                keyword in location
-                for keyword in LOCATION_KEYWORDS
+                loc in location
+                for loc in LOCATION_KEYWORDS
             )
+            
+            if role_match and location_match:
 
-            if role_match:
-
+            excluded_match = any(
+                keyword in title
+                for keyword in EXCLUDED
+            )
+            
+            if role_match and location_match and not excluded_match:
+            
                 jobs.append([
                     company,
                     job.get("title", ""),
@@ -100,6 +172,7 @@ with open(
         "Link"
     ])
 
+    jobs.sort(key=lambda x: x[0])
     writer.writerows(jobs)
 
 print(f"Found {len(jobs)} internships")
