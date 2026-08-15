@@ -1,48 +1,97 @@
 import requests
 import csv
 
-GREENHOUSE_COMPANIES = [
+COMPANIES = [
     "cloudflare",
     "datadog",
-    "stripe"
+    "stripe",
+    "canva",
+    "hashicorp",
+    "snowflake",
+    "duolingo",
+    "airbnb",
+    "robinhood",
+    "coinbase"
 ]
 
-KEYWORDS = [
+ROLE_KEYWORDS = [
     "intern",
     "internship",
-    "software engineer intern",
-    "swe intern",
-    "summer intern",
-    "student",
+    "software",
+    "software engineer",
+    "backend",
+    "full stack",
+    "developer",
+    "sde",
+    "engineering",
     "new grad"
+]
+
+LOCATION_KEYWORDS = [
+    "india",
+    "bangalore",
+    "bengaluru",
+    "hyderabad",
+    "pune",
+    "mumbai",
+    "remote"
 ]
 
 jobs = []
 
-for company in GREENHOUSE_COMPANIES:
+for company in COMPANIES:
+
     try:
         url = f"https://boards-api.greenhouse.io/v1/boards/{company}/jobs"
 
-        data = requests.get(url, timeout=20).json()
+        response = requests.get(url, timeout=20)
+
+        if response.status_code != 200:
+            continue
+
+        data = response.json()
 
         for job in data["jobs"]:
 
-            title = job["title"]
+            title = job.get("title", "").lower()
 
-            if any(k in title.lower() for k in KEYWORDS):
+            location = (
+                job.get("location", {})
+                .get("name", "")
+                .lower()
+            )
+
+            role_match = any(
+                keyword in title
+                for keyword in ROLE_KEYWORDS
+            )
+
+            location_match = any(
+                keyword in location
+                for keyword in LOCATION_KEYWORDS
+            )
+
+            if role_match:
 
                 jobs.append([
                     company,
-                    title,
-                    job.get("location", {}).get("name", ""),
-                    job["absolute_url"]
+                    job.get("title", ""),
+                    job.get("location", {})
+                       .get("name", ""),
+                    job.get("absolute_url", "")
                 ])
 
-    except Exception as e:
-        print(company, e)
+    except Exception:
+        pass
 
-with open("internships.csv", "w", newline="", encoding="utf-8") as f:
-    writer = csv.writer(f)
+with open(
+    "internships.csv",
+    "w",
+    newline="",
+    encoding="utf-8"
+) as file:
+
+    writer = csv.writer(file)
 
     writer.writerow([
         "Company",
@@ -53,4 +102,4 @@ with open("internships.csv", "w", newline="", encoding="utf-8") as f:
 
     writer.writerows(jobs)
 
-print("Found", len(jobs), "internships")
+print(f"Found {len(jobs)} internships")
