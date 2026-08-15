@@ -125,31 +125,28 @@ for company in COMPANIES:
                 .get("name", "")
                 .lower()
             )
-
-            role_match = any(
+            
+           role_match = any(
                 keyword in title
                 for keyword in ROLE_KEYWORDS
             )
-
+            
             location_match = any(
                 loc in location
                 for loc in LOCATION_KEYWORDS
             )
             
-            if role_match and location_match:
-
             excluded_match = any(
                 keyword in title
                 for keyword in EXCLUDED
             )
-            
+
             if role_match and location_match and not excluded_match:
             
                 jobs.append([
                     company,
                     job.get("title", ""),
-                    job.get("location", {})
-                       .get("name", ""),
+                    job.get("location", {}).get("name", ""),
                     job.get("absolute_url", "")
                 ])
 
