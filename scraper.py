@@ -1,12 +1,28 @@
 import requests
 
-url = "https://boards-api.greenhouse.io/v1/boards/cloudflare/jobs"
+companies = [
+    "cloudflare",
+    "stripe",
+    "datadog",
+    "airbnb",
+    "notion",
+    "coinbase",
+    "scaleai",
+    "rippling"
+]
 
-response = requests.get(url, timeout=30)
+for company in companies:
+    try:
+        url = f"https://boards-api.greenhouse.io/v1/boards/{company}/jobs"
 
-print("Status Code:", response.status_code)
+        data = requests.get(url, timeout=20).json()
 
-data = response.json()
+        print(f"\n=== {company.upper()} ===")
 
-print("Keys:", data.keys())
-print("Total Jobs:", len(data["jobs"]))
+        for job in data["jobs"]:
+            if "intern" in job["title"].lower():
+                print(job["title"])
+                print(job["absolute_url"])
+
+    except:
+        pass
