@@ -1,14 +1,8 @@
 import requests
 
-print("GitHub Actions is running Python successfully")
+url = "https://boards-api.greenhouse.io/v1/boards/notion/jobs"
 
-response = requests.get(
-    "https://boards-api.greenhouse.io/v1/boards/notion/jobs",
-    timeout=30
-)
+response = requests.get(url, timeout=30)
 
 print("Status Code:", response.status_code)
-
-data = response.json()
-
-print("Total Jobs:", len(data["jobs"]))
+print(response.text[:500])
