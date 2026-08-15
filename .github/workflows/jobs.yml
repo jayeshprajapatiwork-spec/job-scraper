@@ -21,3 +21,9 @@ jobs:
       - name: Run Python
         run: |
           python scraper.py
+
+      - name: Upload CSV
+        uses: actions/upload-artifact@v4
+        with:
+          name: internships
+          path: internships.csv
